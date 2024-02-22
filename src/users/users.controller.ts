@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
 
 interface usersInterface {
-	id: number;
+	id: string;
 	name: string;
 	email: string;
 	password: string;
@@ -9,13 +9,13 @@ interface usersInterface {
 
 const users: usersInterface[] = [
 	{
-		id: 1,
+		id: '1',
 		name: 'Otavio',
 		email: 'otavio@gmail.com',
 		password: '123456'
 	},
 	{
-		id: 2,
+		id: '2',
 		name: 'Camila',
 		email: 'camila@gmail.com',
 		password: '123456'
@@ -36,7 +36,32 @@ export class UsersController {
 	}
 
 	@Get(':id')
-	async readOne(@Param() param: { id: number }): Promise<usersInterface> {
+	async readOne(@Param() param: { id: string }): Promise<usersInterface> {
 		return users.find(user => user.id == param.id);
+	}
+
+	@Put(':id')
+	async updateAll(@Body() body: usersInterface, @Param() parameters: { id: string }): Promise<usersInterface[]> {
+		users[users.findIndex(user => user.id == parameters.id)] = body;
+		return users;
+	}
+
+	@Patch(':id')
+	async update(@Body() body: usersInterface, @Param() parameters: { id: string }): Promise<usersInterface[]> {
+		const index: number = users.findIndex(user => user.id == parameters.id);
+		for (const prop in body) {
+			users[index][prop] = body[prop];
+		}
+		return users;
+	}
+
+	@Delete(':id')
+	async delete(@Param() parameters: { id: string }): Promise<usersInterface[]> {
+		users.splice(
+			users.findIndex(user => user.id == parameters.id),
+			1
+		);
+
+		return users;
 	}
 }
