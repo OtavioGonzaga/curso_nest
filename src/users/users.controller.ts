@@ -1,67 +1,43 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
-
-interface usersInterface {
-	id: string;
-	name: string;
-	email: string;
-	password: string;
-}
-
-const users: usersInterface[] = [
-	{
-		id: '1',
-		name: 'Otavio',
-		email: 'otavio@gmail.com',
-		password: '123456'
-	},
-	{
-		id: '2',
-		name: 'Camila',
-		email: 'camila@gmail.com',
-		password: '123456'
-	}
-];
-
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
+import { CreateUserDTO } from './dto/create-user.dto';
+import { UpdatePatchUserDTO, UpdatePutUserDTO } from './dto/update-user.dto';
+import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController {
+	constructor(private readonly usersService: UsersService) {}
+
 	@Post()
-	async create(@Body() body: usersInterface): Promise<usersInterface[]> {
-		users.push(body);
-		return users;
+	async create(@Body() body: CreateUserDTO) {
+		return await this.usersService.create(body);
 	}
 
 	@Get()
-	async read(): Promise<usersInterface[]> {
-		return users;
+	async read(): Promise<CreateUserDTO[]> {
+		return this.usersService.read();
 	}
 
 	@Get(':id')
-	async readOne(@Param() param: { id: string }): Promise<usersInterface> {
-		return users.find(user => user.id == param.id);
+	async readOne(@Param('id', ParseIntPipe) id: number) {
+		return await this.usersService.readOne(id);
 	}
 
 	@Put(':id')
-	async updateAll(@Body() body: usersInterface, @Param() parameters: { id: string }): Promise<usersInterface[]> {
-		users[users.findIndex(user => user.id == parameters.id)] = body;
-		return users;
+	async updateAll(@Body() body: UpdatePutUserDTO, @Param('id', ParseIntPipe) id: number) {
+		return await this.usersService.update({ ...body, id });
 	}
 
 	@Patch(':id')
-	async update(@Body() body: usersInterface, @Param() parameters: { id: string }): Promise<usersInterface[]> {
-		const index: number = users.findIndex(user => user.id == parameters.id);
-		for (const prop in body) {
-			users[index][prop] = body[prop];
-		}
-		return users;
+	async update(@Body() body: UpdatePatchUserDTO, @Param('id', ParseIntPipe) id: number) {
+		return await this.usersService.updateOneField({ ...body, id });
+	}
+
+	@Delete('iamsure')
+	async deleteAll() {
+		return await this.usersService.deleteAll();
 	}
 
 	@Delete(':id')
-	async delete(@Param() parameters: { id: string }): Promise<usersInterface[]> {
-		users.splice(
-			users.findIndex(user => user.id == parameters.id),
-			1
-		);
-
-		return users;
+	async delete(@Param('id', ParseIntPipe) id: number) {
+		return await this.usersService.delete(id);
 	}
 }
