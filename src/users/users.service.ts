@@ -8,9 +8,12 @@ export class UsersService {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async exists(id: number) {
-		if (!(await this.readOne(id))) {
+		if (
+			!(await this.prisma.users.count({
+				where: { id }
+			}))
+		)
 			throw new NotFoundException(`User ${id} does not exist`);
-		}
 	}
 
 	async create(data: CreateUserDTO) {

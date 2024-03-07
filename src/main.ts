@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { timeExecInterceptor } from './interceptors/timeExec.intercept';
+import timeExecInterceptor from './interceptors/timeExec.intercept';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);

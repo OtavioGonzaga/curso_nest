@@ -2,7 +2,7 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { Observable, tap } from 'rxjs';
 
 @Injectable()
-export class timeExecInterceptor implements NestInterceptor {
+export default class timeExecInterceptor implements NestInterceptor {
 	intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
 		const init = Date.now();
 
