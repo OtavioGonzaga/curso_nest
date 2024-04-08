@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post, Put } from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdatePatchUserDTO, UpdatePutUserDTO } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { ParamID } from 'src/decorators/paramID.decorator';
 @Controller('users')
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
@@ -17,27 +18,22 @@ export class UsersController {
 	}
 
 	@Get(':id')
-	async readOne(@Param('id', ParseIntPipe) id: number) {
+	async readOne(@ParamID() id: number) {
 		return await this.usersService.readOne(id);
 	}
 
 	@Put(':id')
-	async updateAll(@Body() body: UpdatePutUserDTO, @Param('id', ParseIntPipe) id: number) {
+	async updateAll(@Body() body: UpdatePutUserDTO, @ParamID() id: number) {
 		return await this.usersService.update({ ...body, id });
 	}
 
 	@Patch(':id')
-	async update(@Body() body: UpdatePatchUserDTO, @Param('id', ParseIntPipe) id: number) {
+	async update(@Body() body: UpdatePatchUserDTO, @ParamID() id: number) {
 		return await this.usersService.updateOneField({ ...body, id });
 	}
 
-	@Delete('iamsure')
-	async deleteAll() {
-		return await this.usersService.deleteAll();
-	}
-
 	@Delete(':id')
-	async delete(@Param('id', ParseIntPipe) id: number) {
+	async delete(@ParamID() id: number) {
 		return await this.usersService.delete(id);
 	}
 }

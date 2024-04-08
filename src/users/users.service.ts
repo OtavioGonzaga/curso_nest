@@ -60,8 +60,4 @@ export class UsersService {
 			where: { id }
 		});
 	}
-
-	async deleteAll() {
-		await this.prisma.users.deleteMany();
-	}
 }
