@@ -8,15 +8,22 @@ export class AuthGuard implements CanActivate {
 		private readonly authService: AuthService,
 		private readonly usersService: UsersService
 	) {}
+
 	async canActivate(context: ExecutionContext) {
 		try {
 			const request = context.switchToHttp().getRequest();
-			const tokenPayload = await this.authService.verifyToken((request.headers.authorization ?? '').split(' ')[1]);
+			const token = request.headers.authorization;
 
-			request.tokenPayload = tokenPayload;
-			request.user = this.usersService.readOne(Number(tokenPayload.sub));
+			if (token) {
+				const tokenPayload = await this.authService.verifyToken((request.headers.authorization ?? '').split(' ')[1]);
 
-			return true;
+				request.tokenPayload = tokenPayload;
+				request.user = await this.usersService.readOne(Number(tokenPayload.sub));
+
+				return true;
+			}
+
+			return false;
 		} catch (e) {
 			console.error(e);
 			return false;

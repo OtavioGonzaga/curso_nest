@@ -1,7 +1,7 @@
 import { ExecutionContext, NotFoundException, createParamDecorator } from '@nestjs/common';
 
-export const User = createParamDecorator((filter: string | null, context: ExecutionContext) => {
-	const user = context.switchToHttp().getRequest().user;
+export const User = createParamDecorator(async (filter: string | null, context: ExecutionContext) => {
+	const user = await context.switchToHttp().getRequest().user;
 
 	if (filter) return user[filter];
 	if (user) return user;

@@ -40,6 +40,7 @@ export class UsersService {
 
 	async update(data: UpdatePutUserDTO) {
 		await this.exists(data.id);
+
 		return await this.prisma.users.update({
 			where: { id: data.id },
 			data: data
@@ -48,6 +49,7 @@ export class UsersService {
 
 	async updateOneField(data: UpdatePatchUserDTO) {
 		await this.exists(data.id);
+
 		return await this.prisma.users.update({
 			where: { id: data.id },
 			data: { ...data }
